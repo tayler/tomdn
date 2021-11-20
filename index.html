@@ -15,6 +15,7 @@
 				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
 					Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
 					sans-serif;
+				margin: 0;
 			}
 			table {
 				border-collapse: collapse;
@@ -36,16 +37,89 @@
 			a {
 				color: #14213d;
 			}
+			.screen-centered {
+				width: 100vw;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			/* loader thanks to https://loading.io/css/ */
+			.lds-ellipsis {
+				display: inline-block;
+				position: relative;
+				width: 80px;
+				height: 80px;
+			}
+			.lds-ellipsis div {
+				position: absolute;
+				top: 33px;
+				width: 13px;
+				height: 13px;
+				border-radius: 50%;
+				background: #ea411c;
+				animation-timing-function: cubic-bezier(0, 1, 1, 0);
+			}
+			.lds-ellipsis div:nth-child(1) {
+				left: 8px;
+				animation: lds-ellipsis1 0.6s infinite;
+			}
+			.lds-ellipsis div:nth-child(2) {
+				left: 8px;
+				animation: lds-ellipsis2 0.6s infinite;
+			}
+			.lds-ellipsis div:nth-child(3) {
+				left: 32px;
+				animation: lds-ellipsis2 0.6s infinite;
+			}
+			.lds-ellipsis div:nth-child(4) {
+				left: 56px;
+				animation: lds-ellipsis3 0.6s infinite;
+			}
+			@keyframes lds-ellipsis1 {
+				0% {
+					transform: scale(0);
+				}
+				100% {
+					transform: scale(1);
+				}
+			}
+			@keyframes lds-ellipsis3 {
+				0% {
+					transform: scale(1);
+				}
+				100% {
+					transform: scale(0);
+				}
+			}
+			@keyframes lds-ellipsis2 {
+				0% {
+					transform: translate(0, 0);
+				}
+				100% {
+					transform: translate(24px, 0);
+				}
+			}
 		</style>
 	</head>
 	<body>
-		<section style="width: 980px; margin: auto">
+		<section id="Loader" class="screen-centered">
+			<div class="lds-ellipsis">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</section>
+		<!-- info is hidden until it is clear that no path matches -->
+		<section id="Info" style="width: 980px; margin: auto; display: none">
 			<h1 style="border-bottom: 4px solid #ea411c; width: min-content">
 				Hello!
 			</h1>
 			<p>
 				This site exists to get you to relevant MDN web documentation
-				ASAP. Here are some ways to use the site.
+				with as little effort as possible. Here are some ways to use the
+				site.
 			</p>
 			<table style="border-spacing: 10px">
 				<thead>
@@ -57,8 +131,8 @@
 				<tbody>
 					<tr>
 						<td>
-							<a href="https://tomdn.com/array.some">
-								tomdn.com/array.some</a
+							<a href="https://tomdn.com?array.some">
+								tomdn.com?array.some</a
 							>
 						</td>
 						<td>
@@ -67,8 +141,8 @@
 					</tr>
 					<tr>
 						<td>
-							<a href="https://tomdn.com/object.keys"
-								>tomdn.com/object.keys</a
+							<a href="https://tomdn.com?object.keys"
+								>tomdn.com?object.keys</a
 							>
 						</td>
 						<td>
@@ -77,16 +151,16 @@
 					</tr>
 					<tr>
 						<td>
-							<a href="https://tomdn.com/css.flex"
-								>tomdn.com/css.flex</a
+							<a href="https://tomdn.com?css.flex"
+								>tomdn.com?css.flex</a
 							>
 						</td>
 						<td>https://developer.mozilla.org/docs/Web/CSS/flex</td>
 					</tr>
 					<tr>
 						<td>
-							<a href="https://tomdn.com/htmlel.input"
-								>tomdn.com/htmlel.input</a
+							<a href="https://tomdn.com?htmlel.input"
+								>tomdn.com?htmlel.input</a
 							>
 						</td>
 						<td>
@@ -95,40 +169,60 @@
 					</tr>
 					<tr>
 						<td>
-							<a href="https://tomdn.com/htmlattr.autofocus"
-								>tomdn.com/htmlattr.autofocus</a
+							<a href="https://tomdn.com?htmlattr.autofocus"
+								>tomdn.com?htmlattr.autofocus</a
 							>
 						</td>
 						<td>
 							https://developer.mozilla.org/docs/Web/HTML/Global_attributes/autofocus
 						</td>
 					</tr>
+					<tr>
+						<td>
+							<a href="https://tomdn.com?svg">tomdn.com?svg</a>
+						</td>
+						<td>
+							https://developer.mozilla.org/en-US/search?q=svg
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			<p>
 				That's it. So instead of googling "MDN string replace", just
-				type tomdn.com/string.replace. tomdn.com will send you directly
-				to the correct page on MDN from there.
+				type tomdn.com?string.replace in your browser. tomdn.com will
+				send you directly to the correct page on MDN from there.
 			</p>
 			<p>
-				If the path is not known to tomdn.com, you will be sent to the
+				If the item is not known to tomdn.com, you will be sent to the
 				search results page on MDN for that term.
 			</p>
 		</section>
 		<script>
+			// hide the loader and show the information
+			function showInfo() {
+				setTimeout(() => {
+					document.getElementById("Loader").style.display = "none";
+					document.getElementById("Info").style.display = "block";
+				}, 200);
+			}
 			(function () {
 				// MDN will fill in the locale
 				const mdnDocsBase = "https://developer.mozilla.org/docs/Web";
 				const mdnSearchBase = "https://developer.mozilla.org/search?q=";
-				const currentPath = window.location.pathname
-					.replace("/", "")
+				const currentSearch = window.location.search
+					.replace("?", "")
 					.toLocaleLowerCase();
-				if (currentPath === "") {
-					console.log("finishing");
+
+				if (currentSearch === "") {
+					console.debug("path is empty");
+
+					showInfo();
+
 					return;
 				}
 
-				// big list here, but not all of them map nicely to a standard url
+				// https://developer.mozilla.org/en-US/docs/Web/API
+				// MDN has a bigger list of browser APIs, but not all of them map nicely to a standard url
 				const browserApis = [
 					"window",
 					"fetch",
@@ -138,7 +232,25 @@
 					"websocket",
 					"worker",
 				];
+
+				// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects
 				const jsObjects = [
+					// Value properties
+					"infinity",
+					"nan",
+					"undefined",
+					"globalthis",
+					"this",
+					// Function properties
+					"eval",
+					"isfinite",
+					"isnan",
+					"parsefloat",
+					"parseint",
+					"encodeuri",
+					"encodeuricomponent",
+					"decodeuri",
+					"decodeuricomponent",
 					// Fundamental objects
 					"object",
 					"function",
@@ -186,36 +298,36 @@
 					"intl",
 				];
 
-				const parts = currentPath.split(".");
+				const parts = currentSearch.split(".");
 				if (parts[0] === "") {
-					console.log("parts[0] is empty");
+					console.debug("parts[0] is empty");
+					showInfo();
 					return;
 				}
 
 				let url;
 
-				if (browserApis.indexOf(parts[0]) > -1) {
+				if (parts[0] === "css") {
+					url = `${mdnDocsBase}/CSS`;
+				} else if (browserApis.indexOf(parts[0]) > -1) {
 					// e.g., /window.location => /API/Window/location
 					url = `${mdnDocsBase}/API/${parts[0]}`;
-				} else if (parts[0] === "css") {
-					url = `${mdnDocsBase}/CSS`;
 				} else if (jsObjects.indexOf(parts[0]) > -1) {
 					// e.g., object.entries => /Javascript/Reference/Global_Objects/object/entries
 					// regex is an alias for regexp
 					parts[0] = parts[0] === "regex" ? "regexp" : parts[0];
+					parts[0] = parts[0] === "this" ? "globalthis" : parts[0];
 					url = `${mdnDocsBase}/Javascript/Reference/Global_Objects/${parts[0]}`;
 				} else if (parts[0] === "htmlel") {
 					// e.g., htmlel.input => /HTML/Element/input
-					// only handles html elements but could possibly handle attributes somehow
 					url = `${mdnDocsBase}/HTML/Element`;
 				} else if (parts[0] === "htmlattr") {
 					// e.g., htmlattr.autofocus => /HTML/Global_attributes/autofocus
-					// only handles html elements but could possibly handle attributes somehow
 					url = `${mdnDocsBase}/HTML/Global_attributes`;
-				} else if (parts[1]) {
+				} else {
 					// if none of the parts[0] matched yet, part[0] is not something explicitly handled. Run a search on MDN.
-					// e.g., parseint => https://developer.mozilla.org/search?q=parseint
-					const searchTerm = encodeURI(parts[1]);
+					// e.g., svg => https://developer.mozilla.org/search?q=svg
+					const searchTerm = encodeURI(parts[0]);
 					window.location.href = `${mdnSearchBase}${searchTerm}`;
 				}
 
@@ -225,6 +337,8 @@
 
 				if (url) {
 					window.location.href = url;
+				} else {
+					showInfo();
 				}
 			})();
 		</script>
