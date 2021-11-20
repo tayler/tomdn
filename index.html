@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>To MDN</title>
+	</head>
+	<body>
+		<script>
+			(function () {
+				// MDN will fill in the locale
+				const mdnDocsBase = "https://developer.mozilla.org/docs/Web";
+				const mdnSearchBase = "https://developer.mozilla.org/search?q=";
+				const currentPath = window.location.pathname
+					.replace("/", "")
+					.toLocaleLowerCase();
+				if (currentPath === "") {
+					return;
+				}
+
+				// big list here, but not all of them map nicely to a standard url
+				const browserApis = [
+					"window",
+					"fetch",
+					"geolocation",
+					"history",
+					"pushmanager",
+					"websocket",
+					"worker",
+				];
+				const jsObjects = [
+					// Fundamental objects
+					"object",
+					"function",
+					"boolean",
+					"symbol",
+					// Numbers and dates
+					"number",
+					"bigint",
+					"math",
+					"date",
+					// Text processing
+					"string",
+					"regexp",
+					"regex",
+					// Indexed collections
+					"array",
+					"int8array",
+					"uint8array",
+					"uint8clampedarray",
+					"int16array",
+					"uint16array",
+					"int32array",
+					"uint32array",
+					"float32array",
+					"float64array",
+					"bigint64array",
+					"biguint64array",
+					// Keyed collections
+					"map",
+					"set",
+					"weakmap",
+					"weakset",
+					// Structured data
+					"arraybuffer",
+					"sharedarraybuffer",
+					"atomics",
+					"dataview",
+					"json",
+					// Control abstraction objects
+					"promise",
+					"generator",
+					"generatorfunction",
+					"asyncfunction",
+					// Internationalization
+					"intl",
+				];
+
+				const parts = currentPath.split(".");
+				if (parts[0] === "") {
+					return;
+				}
+
+				let url;
+
+				if (browserApis.indexOf(parts[0] > -1)) {
+					// e.g., /window.location => /API/Window/location
+					url = `${mdnDocsBase}/API/${parts[0]}`;
+				} else if (parts[0] === "css") {
+					url = `${mdnDocsBase}/CSS`;
+				} else if (jsObjects.indexOf(parts[0]) > -1) {
+					// e.g., object.entries => /Javascript/Reference/Global_Objects/object/entries
+					// regex is an alias for regexp
+					parts[0] = parts[0] === "regex" ? "regexp" : parts[0];
+					url = `${mdnDocsBase}/Javascript/Reference/Global_Objects/${parts[1]}`;
+				} else if (parts[0] === "htmlel") {
+					// e.g., htmlel.input => /HTML/Element/input
+					// only handles html elements but could possibly handle attributes somehow
+					url = `${mdnDocsBase}/HTML/Element`;
+				} else if (parts[0] === "htmlattr") {
+					// e.g., htmlattr.autofocus => /HTML/Global_attributes/autofocus
+					// only handles html elements but could possibly handle attributes somehow
+					url = `${mdnDocsBase}/HTML/Global_attributes`;
+				} else {
+					// e.g., parseint => https://developer.mozilla.org/search?q=parseint
+					const searchTerm = encodeURI(parts[1]);
+					url = `${mdnSearchBase}${searchTerm}`;
+				}
+
+				if (url && parts[1]) {
+					url += `/${parts[1]}`;
+				}
+
+				if (url) {
+					window.location.href = url;
+				}
+			})();
+		</script>
+	</body>
+</html>
