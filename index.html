@@ -194,7 +194,7 @@
 
 				let url;
 
-				if (browserApis.indexOf(parts[0] > -1)) {
+				if (browserApis.indexOf(parts[0]) > -1) {
 					// e.g., /window.location => /API/Window/location
 					url = `${mdnDocsBase}/API/${parts[0]}`;
 				} else if (parts[0] === "css") {
